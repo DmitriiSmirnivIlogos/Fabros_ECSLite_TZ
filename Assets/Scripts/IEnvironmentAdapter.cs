@@ -6,6 +6,7 @@ public interface IEnvironmentAdapter
 {
     Vector3 LastClickPosition { get; set; }
     Vector3 GetCameraPosition();
+    Vector3 GetCameraEulerAngles();
     void SetCameraPosition(Vector3 position);
     void SetCameraRotation(Quaternion rotation);
     void SetCharacterLookAt(Vector3 lookAt);

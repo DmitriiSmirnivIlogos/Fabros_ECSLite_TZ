@@ -32,7 +32,10 @@ public class UnityAdapter : MonoBehaviour, IEnvironmentAdapter
     {
         return _camera.transform.position;
     }
-
+    public Vector3 GetCameraEulerAngles()
+    {
+        return _camera.transform.eulerAngles;
+    }
     public void SetCameraPosition(Vector3 position)
     {
         _camera.transform.position = position;

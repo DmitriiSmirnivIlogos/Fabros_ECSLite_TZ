@@ -7,9 +7,10 @@ using Zenject;
 
 public class CameraFollowSystem : IEcsInitSystem, IEcsRunSystem
     {
-        [Inject] IEnvironmentAdapter environmentAdapter;
-        private int cameraEntity;
-        
+        [Inject] IEnvironmentAdapter _environmentAdapter;
+        private int _cameraEntity;
+        private const float Smoothness = 0.5f;
+        private Vector3 _cameraOffset = new Vector3(-1, 7, 5);
 
         public void Init(IEcsSystems ecsSystems)
         {
@@ -19,12 +20,12 @@ public class CameraFollowSystem : IEcsInitSystem, IEcsRunSystem
             cameraPool.Add(cameraEntity);
             ref var cameraComponent = ref cameraPool.Get(cameraEntity);
 
-            cameraComponent.cameraSmoothness = 1f;
+            cameraComponent.cameraSmoothness = Smoothness;
             cameraComponent.curVelocity = Vector3.zero;
-            cameraComponent.offset = new Vector3(5f, 10f, -4f);
-            cameraComponent.rotation = new Vector3(50, -31, 0);
+            cameraComponent.offset = _cameraOffset;
+            cameraComponent.rotation = _environmentAdapter.GetCameraEulerAngles();
 
-            this.cameraEntity = cameraEntity;
+            this._cameraEntity = cameraEntity;
         }
 
         public void Run(IEcsSystems ecsSystems)
@@ -33,16 +34,16 @@ public class CameraFollowSystem : IEcsInitSystem, IEcsRunSystem
             var playerPool = ecsSystems.GetWorld().GetPool<PlayerComponent>();
             var cameraPool = ecsSystems.GetWorld().GetPool<CameraComponent>();
 
-            ref var cameraComponent = ref cameraPool.Get(cameraEntity);
+            ref var cameraComponent = ref cameraPool.Get(_cameraEntity);
 
             foreach (var entity in filter)
             {
                 ref var playerComponent = ref playerPool.Get(entity);
 
-                Vector3 currentPosition = environmentAdapter.GetCameraPosition();
+                Vector3 currentPosition = _environmentAdapter.GetCameraPosition();
                 Vector3 targetPoint = playerComponent.Position + cameraComponent.offset;
 
-                environmentAdapter.SetCameraPosition(Vector3.SmoothDamp(currentPosition, targetPoint,
+                _environmentAdapter.SetCameraPosition(Vector3.SmoothDamp(currentPosition, targetPoint,
                     ref cameraComponent.curVelocity, cameraComponent.cameraSmoothness));
             }
         }

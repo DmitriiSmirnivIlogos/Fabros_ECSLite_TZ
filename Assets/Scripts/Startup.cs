@@ -12,7 +12,7 @@ public class Startup
     [Inject] private PlayerInitSystem _playerInitSystem;
     [Inject] private PlayerInputSystem _playerInputSystem;
     [Inject] private PlayerMoveSystem _playerMoveSystem;
-    [Inject] private PlayerInitSystem _cameraFollowSystem;
+    [Inject] private CameraFollowSystem _cameraFollowSystem;
 
     public void Init()
     {
