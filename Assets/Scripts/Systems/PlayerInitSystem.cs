@@ -1,8 +1,10 @@
 ﻿using Leopotam.EcsLite;
 using UnityEngine;
+using Zenject;
 
-    public class PlayerInitSystem : IEcsInitSystem
+public class PlayerInitSystem : IEcsInitSystem
     {
+        [Inject] IEnvironmentAdapter _environmentAdapter;
         public void Init(IEcsSystems ecsSystems)
         {
             var ecsWorld = ecsSystems.GetWorld();
@@ -11,13 +13,7 @@ using UnityEngine;
 
             var playerPool = ecsWorld.GetPool<PlayerComponent>();
             playerPool.Add(playerEntity);
-            ref var playerComponent = ref playerPool.Get(playerEntity);
             var playerInputPool = ecsWorld.GetPool<PlayerInputComponent>();
             playerInputPool.Add(playerEntity);
-
-            var playerGO = GameObject.FindGameObjectWithTag("Player");
-            playerComponent.playerSpeed = 10;
-            playerComponent.playerTransform = playerGO.transform;
-            playerComponent.playerRB = playerGO.GetComponent<Rigidbody>();
         }
     }

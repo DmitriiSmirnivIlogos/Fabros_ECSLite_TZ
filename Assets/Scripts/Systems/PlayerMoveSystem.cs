@@ -2,9 +2,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 
-    public class PlayerMoveSystem : IEcsRunSystem
+public class PlayerMoveSystem : IEcsRunSystem
     {
+        [Inject] private IEnvironmentAdapter _adapter;
+
         public void Run(IEcsSystems ecsSystems)
         {
             var filter = ecsSystems.GetWorld().Filter<PlayerComponent>().Inc<PlayerInputComponent>().End();
@@ -15,8 +18,17 @@ using UnityEngine;
             {
                 ref var playerComponent = ref playerPool.Get(entity);
                 ref var playerInputComponent = ref playerInputPool.Get(entity);
+                
+                playerComponent.Position = _adapter.GetCharacterPosition();
 
-                playerComponent.playerRB.AddForce(playerInputComponent.moveInput * playerComponent.playerSpeed, ForceMode.Acceleration);
+                if(playerInputComponent.moveInput.magnitude>0.1f)
+                {
+                   _adapter.SetCharacterMoveForward();
+                }
+                else
+                {
+                    _adapter.StopCharacter();
+                }
             }
             
         }

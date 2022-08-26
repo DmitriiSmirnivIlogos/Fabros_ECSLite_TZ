@@ -1,7 +1,6 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
+
 using UnityEngine;
+using Zenject;
 
 public class UnityAdapter : MonoBehaviour, IEnvironmentAdapter
 {
@@ -11,13 +10,12 @@ public class UnityAdapter : MonoBehaviour, IEnvironmentAdapter
     [SerializeField] private Animator _characterAnimator;
 
 
-    private Startup _startup;
+    [Inject] private Startup _startup;
     
     public Vector3 LastClickPosition { get; set; }
     
     void Start()
     {   
-        _startup = new Startup();
         _startup.Init();
     }
 
@@ -29,6 +27,11 @@ public class UnityAdapter : MonoBehaviour, IEnvironmentAdapter
     void OnDestroy()
     {
         _startup.OnDestroy();
+    }
+
+    public Vector3 GetCameraPosition()
+    {
+        return _camera.transform.position;
     }
 
     public void SetCameraPosition(Vector3 position)
@@ -46,6 +49,11 @@ public class UnityAdapter : MonoBehaviour, IEnvironmentAdapter
        _character.transform.LookAt(new Vector3(lookAt.x, _character.transform.position.y, lookAt.z));
     }
     
+    public Vector3 GetCharacterPosition()
+    {
+        return _character.transform.position;
+    }
+    
     public void SetCharacterMoveForward()
     {
         _characterAnimator.SetBool("Walk", true);
@@ -53,7 +61,7 @@ public class UnityAdapter : MonoBehaviour, IEnvironmentAdapter
     
     public void StopCharacter()
     {
-        _characterAnimator.SetBool("False", true);
+        _characterAnimator.SetBool("Walk", false);
     }
 
     private void OnMouseUp()

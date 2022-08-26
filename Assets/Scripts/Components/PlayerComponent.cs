@@ -4,7 +4,5 @@ using UnityEngine;
 
 public struct PlayerComponent
 {
-    public Transform playerTransform;
-    public Rigidbody playerRB;
-    public float playerSpeed;
+    public Vector3 Position;
 }

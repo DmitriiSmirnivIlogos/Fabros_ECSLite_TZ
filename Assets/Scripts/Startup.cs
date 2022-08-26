@@ -1,39 +1,49 @@
 ﻿using Leopotam.EcsLite;
+using UnityEngine;
+using Zenject;
 
 
-    public class Startup
+public class Startup
+{
+    private EcsWorld ecsWorld;
+    private IEcsSystems initSystems;
+    private IEcsSystems updateSystems;
+
+    [Inject] private PlayerInitSystem _playerInitSystem;
+    [Inject] private PlayerInputSystem _playerInputSystem;
+    [Inject] private PlayerMoveSystem _playerMoveSystem;
+    [Inject] private PlayerInitSystem _cameraFollowSystem;
+
+    public void Init()
     {
-        private EcsWorld ecsWorld;
-        private IEcsSystems initSystems;
-        private IEcsSystems updateSystems;
-
-        public void Init()
-        {
-            ecsWorld = new EcsWorld();
+        ecsWorld = new EcsWorld();
 
 
-            initSystems = new EcsSystems(ecsWorld)
-                .Add(new PlayerInitSystem());
+        initSystems = new EcsSystems(ecsWorld)
+            .Add(_playerInitSystem);
+        initSystems.Init();
+        
+        updateSystems = new EcsSystems(ecsWorld)
+            .Add(_playerInputSystem)
+            .Add(_playerMoveSystem)
+            .Add(_cameraFollowSystem);
 
-            initSystems.Init();
+ 
+      
+        updateSystems.Init();
 
-            updateSystems = new EcsSystems(ecsWorld)
-                .Add(new PlayerInputSystem())
-                .Add(new PlayerMoveSystem())
-                .Add(new CameraFollowSystem());
-
-            updateSystems.Init();
-        }
-
-        public void Update()
-        {
-            updateSystems.Run();
-        }
-
-        public void OnDestroy()
-        {
-            initSystems.Destroy();
-            updateSystems.Destroy();
-            ecsWorld.Destroy();
-        }
+       
     }
+
+    public void Update()
+    {
+        updateSystems.Run();
+    }
+
+    public void OnDestroy()
+    {
+        initSystems.Destroy();
+        updateSystems.Destroy();
+        ecsWorld.Destroy();
+    }
+}

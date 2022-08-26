@@ -2,11 +2,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 
 
-    public class CameraFollowSystem : IEcsInitSystem, IEcsRunSystem
+public class CameraFollowSystem : IEcsInitSystem, IEcsRunSystem
     {
+        [Inject] IEnvironmentAdapter environmentAdapter;
         private int cameraEntity;
+        
 
         public void Init(IEcsSystems ecsSystems)
         {
@@ -16,7 +19,6 @@ using UnityEngine;
             cameraPool.Add(cameraEntity);
             ref var cameraComponent = ref cameraPool.Get(cameraEntity);
 
-            cameraComponent.cameraTransform = Camera.main.transform;
             cameraComponent.cameraSmoothness = 1f;
             cameraComponent.curVelocity = Vector3.zero;
             cameraComponent.offset = new Vector3(5f, 10f, -4f);
@@ -37,11 +39,11 @@ using UnityEngine;
             {
                 ref var playerComponent = ref playerPool.Get(entity);
 
-                Vector3 currentPosition = cameraComponent.cameraTransform.position;
-                Vector3 targetPoint = playerComponent.playerTransform.position + cameraComponent.offset;
+                Vector3 currentPosition = environmentAdapter.GetCameraPosition();
+                Vector3 targetPoint = playerComponent.Position + cameraComponent.offset;
 
-                cameraComponent.cameraTransform.position = Vector3.SmoothDamp(currentPosition, targetPoint,
-                    ref cameraComponent.curVelocity, cameraComponent.cameraSmoothness);
+                environmentAdapter.SetCameraPosition(Vector3.SmoothDamp(currentPosition, targetPoint,
+                    ref cameraComponent.curVelocity, cameraComponent.cameraSmoothness));
             }
         }
     }
