@@ -6,7 +6,6 @@ public class GameInstaller : MonoInstaller
     [SerializeField] private UnityAdapter _unityAdapter;
     public override void InstallBindings()
     {
-        
         Container.Bind<Startup>().AsSingle().NonLazy();
         
         Container.Bind<PlayerInputSystem>().AsSingle().NonLazy();

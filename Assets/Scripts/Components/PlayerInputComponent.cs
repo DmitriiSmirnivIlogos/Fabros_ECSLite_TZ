@@ -4,5 +4,5 @@ using UnityEngine;
 
 public struct PlayerInputComponent
 {
-    public Vector3 moveInput;
+    public Vector3 Waypoint;
 }

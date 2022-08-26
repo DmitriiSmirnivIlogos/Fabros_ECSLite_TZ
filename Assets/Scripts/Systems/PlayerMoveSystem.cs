@@ -5,31 +5,44 @@ using UnityEngine;
 using Zenject;
 
 public class PlayerMoveSystem : IEcsRunSystem
+{
+    [Inject] private IEnvironmentAdapter _adapter;
+    private const float Threshold = 0.1f;
+
+    public void Run(IEcsSystems ecsSystems)
     {
-        [Inject] private IEnvironmentAdapter _adapter;
+        var filter = ecsSystems.GetWorld().Filter<PlayerComponent>().Inc<PlayerInputComponent>().End();
+        var playerPool = ecsSystems.GetWorld().GetPool<PlayerComponent>();
+        var playerInputPool = ecsSystems.GetWorld().GetPool<PlayerInputComponent>();
 
-        public void Run(IEcsSystems ecsSystems)
+        foreach (var entity in filter)
         {
-            var filter = ecsSystems.GetWorld().Filter<PlayerComponent>().Inc<PlayerInputComponent>().End();
-            var playerPool = ecsSystems.GetWorld().GetPool<PlayerComponent>();
-            var playerInputPool = ecsSystems.GetWorld().GetPool<PlayerInputComponent>();
+            ref var playerComponent = ref playerPool.Get(entity);
+            ref var playerInputComponent = ref playerInputPool.Get(entity);
 
-            foreach (var entity in filter)
+            playerComponent.Position = _adapter.GetCharacterPosition();
+
+
+            if (Vector3.Distance(GroundedPosition(playerInputComponent.Waypoint),
+                    GroundedPosition(playerComponent.Position)) < Threshold)
             {
-                ref var playerComponent = ref playerPool.Get(entity);
-                ref var playerInputComponent = ref playerInputPool.Get(entity);
-                
-                playerComponent.Position = _adapter.GetCharacterPosition();
-
-                if(playerInputComponent.moveInput.magnitude>0.1f)
-                {
-                   _adapter.SetCharacterMoveForward();
-                }
-                else
-                {
-                    _adapter.StopCharacter();
-                }
+                _adapter.StopCharacter();
+                playerComponent.IsMoving = false;
+                return;
             }
-            
+
+            if (playerComponent.IsMoving)
+            {
+                return;
+            }
+
+            _adapter.SetCharacterLookAt(playerInputComponent.Waypoint);
+            _adapter.SetCharacterMoveForward();
         }
     }
+
+    private Vector3 GroundedPosition(Vector3 position)
+    {
+        return new Vector3(position.x, 0, position.z);
+    }
+}
