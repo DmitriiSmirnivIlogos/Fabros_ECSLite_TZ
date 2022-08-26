@@ -22,18 +22,22 @@ public class PlayerMoveSystem : IEcsRunSystem
 
             playerComponent.Position = _adapter.GetCharacterPosition();
 
+            if (playerInputComponent.Waypoint == Vector3.zero)
+            {
+                continue;
+            }
 
             if (Vector3.Distance(GroundedPosition(playerInputComponent.Waypoint),
                     GroundedPosition(playerComponent.Position)) < Threshold)
             {
                 _adapter.StopCharacter();
                 playerComponent.IsMoving = false;
-                return;
+                continue;
             }
 
             if (playerComponent.IsMoving)
             {
-                return;
+                continue;
             }
 
             _adapter.SetCharacterLookAt(playerInputComponent.Waypoint);

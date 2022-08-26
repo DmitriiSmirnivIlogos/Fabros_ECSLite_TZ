@@ -41,12 +41,13 @@ public class DoorOpenSystem : IEcsInitSystem, IEcsRunSystem
         var openingDoorPool = ecsSystems.GetWorld().GetPool<OpeningDoorComponent>();
         var playerPool = ecsSystems.GetWorld().GetPool<PlayerComponent>();
         var doorsInfo = _environmentAdapter.GetDoorsInfo();
-
+        ref var playerComponent = ref playerPool.Get(0);
+        
         foreach (var entity in filter)
         {
             ref var doorButtonComponent = ref doorButtonPool.Get(entity);
             ref var openingDoorComponent = ref openingDoorPool.Get(entity);
-            ref var playerComponent = ref playerPool.Get(0);
+          
 
             if (Vector3.Distance(playerComponent.Position, doorButtonComponent.Position) < Threshold)
             {
