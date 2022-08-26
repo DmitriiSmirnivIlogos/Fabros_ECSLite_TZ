@@ -7,6 +7,7 @@ using Zenject;
 public class DoorOpenSystem : IEcsInitSystem, IEcsRunSystem
 {
     [Inject] IEnvironmentAdapter _environmentAdapter;
+    
     private const float Threshold = 0.5f;
 
     public void Init(IEcsSystems ecsSystems)
@@ -29,7 +30,6 @@ public class DoorOpenSystem : IEcsInitSystem, IEcsRunSystem
 
             var openingDoorPool = ecsWorld.GetPool<OpeningDoorComponent>();
             openingDoorPool.Add(doorEntity);
-
         }
     }
 

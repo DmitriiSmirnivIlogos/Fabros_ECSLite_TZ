@@ -5,7 +5,7 @@ using Zenject;
 
 public class Startup
 {
-    private EcsWorld ecsWorld;
+    private EcsWorld _ecsWorld;
     private IEcsSystems _systems;
 
     [Inject] private PlayerInitSystem _playerInitSystem;
@@ -16,9 +16,9 @@ public class Startup
 
     public void Init()
     {
-        ecsWorld = new EcsWorld();
+        _ecsWorld = new EcsWorld();
 
-        _systems = new EcsSystems(ecsWorld)
+        _systems = new EcsSystems(_ecsWorld)
             .Add(_playerInitSystem)
             .Add(_playerInputSystem)
             .Add(_playerMoveSystem)
@@ -37,6 +37,6 @@ public class Startup
     public void OnDestroy()
     {
         _systems.Destroy();
-        ecsWorld.Destroy();
+        _ecsWorld.Destroy();
     }
 }

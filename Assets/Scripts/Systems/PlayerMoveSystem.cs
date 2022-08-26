@@ -7,6 +7,7 @@ using Zenject;
 public class PlayerMoveSystem : IEcsRunSystem
 {
     [Inject] private IEnvironmentAdapter _adapter;
+    
     private const float Threshold = 0.1f;
 
     public void Run(IEcsSystems ecsSystems)
