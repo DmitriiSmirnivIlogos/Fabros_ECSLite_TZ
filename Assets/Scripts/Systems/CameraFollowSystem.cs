@@ -20,10 +20,9 @@ public class CameraFollowSystem : IEcsInitSystem, IEcsRunSystem
             cameraPool.Add(cameraEntity);
             ref var cameraComponent = ref cameraPool.Get(cameraEntity);
 
-            cameraComponent.cameraSmoothness = Smoothness;
-            cameraComponent.curVelocity = Vector3.zero;
-            cameraComponent.offset = _cameraOffset;
-            cameraComponent.rotation = _environmentAdapter.GetCameraEulerAngles();
+            cameraComponent.CameraSmoothness = Smoothness;
+            cameraComponent.CurrentVelocity = Vector3.zero;
+            cameraComponent.Offset = _cameraOffset;
 
             this._cameraEntity = cameraEntity;
         }
@@ -41,10 +40,10 @@ public class CameraFollowSystem : IEcsInitSystem, IEcsRunSystem
                 ref var playerComponent = ref playerPool.Get(entity);
 
                 Vector3 currentPosition = _environmentAdapter.GetCameraPosition();
-                Vector3 targetPoint = playerComponent.Position + cameraComponent.offset;
+                Vector3 targetPoint = playerComponent.Position + cameraComponent.Offset;
 
                 _environmentAdapter.SetCameraPosition(Vector3.SmoothDamp(currentPosition, targetPoint,
-                    ref cameraComponent.curVelocity, cameraComponent.cameraSmoothness));
+                    ref cameraComponent.CurrentVelocity, cameraComponent.CameraSmoothness));
             }
         }
     }

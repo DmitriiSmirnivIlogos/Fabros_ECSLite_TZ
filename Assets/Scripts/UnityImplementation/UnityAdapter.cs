@@ -1,4 +1,7 @@
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Zenject;
 
 public class UnityAdapter : MonoBehaviour, IEnvironmentAdapter
@@ -6,7 +9,7 @@ public class UnityAdapter : MonoBehaviour, IEnvironmentAdapter
     [SerializeField] private Camera _camera;
     [SerializeField] private Transform _character;
     [SerializeField] private Animator _characterAnimator;
-
+    [SerializeField] private List<DoorAndButtonContainer> _doorAndButtonContainers;
 
     [Inject] private Startup _startup;
 
@@ -32,10 +35,12 @@ public class UnityAdapter : MonoBehaviour, IEnvironmentAdapter
     {
         return _camera.transform.position;
     }
+
     public Vector3 GetCameraEulerAngles()
     {
         return _camera.transform.eulerAngles;
     }
+
     public void SetCameraPosition(Vector3 position)
     {
         _camera.transform.position = position;
@@ -66,13 +71,37 @@ public class UnityAdapter : MonoBehaviour, IEnvironmentAdapter
         _characterAnimator.SetBool("Walk", false);
     }
 
+    public void SetDoorAngle(int id, Vector3 eulerAngle)
+    {
+        _doorAndButtonContainers[id].doorPivot.eulerAngles = eulerAngle;
+    }
+
+    public List<DoorInfo> GetDoorsInfo()
+    {
+        var list = new List<DoorInfo>();
+        
+        for (var index = 0; index < _doorAndButtonContainers.Count; index++)
+        {
+            var container = _doorAndButtonContainers[index];
+            list.Add(new DoorInfo()
+            {
+                DoorRotation = container.doorPivot.eulerAngles,
+                ButtonPosition = container.doorButton.transform.position,
+                DoorID = index
+            });
+        }
+
+        return list;
+    }
+
+
     private void UpdateUnityInput()
     {
         if (!Input.GetMouseButtonDown(0))
         {
             return;
         }
-        
+
         var ray = _camera.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out var hit))
         {

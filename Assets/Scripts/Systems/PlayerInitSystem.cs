@@ -1,10 +1,7 @@
 ﻿using Leopotam.EcsLite;
-using UnityEngine;
-using Zenject;
 
 public class PlayerInitSystem : IEcsInitSystem
     {
-        [Inject] IEnvironmentAdapter _environmentAdapter;
         public void Init(IEcsSystems ecsSystems)
         {
             var ecsWorld = ecsSystems.GetWorld();
