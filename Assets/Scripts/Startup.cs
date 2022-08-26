@@ -6,44 +6,37 @@ using Zenject;
 public class Startup
 {
     private EcsWorld ecsWorld;
-    private IEcsSystems initSystems;
-    private IEcsSystems updateSystems;
+    private IEcsSystems _systems;
 
     [Inject] private PlayerInitSystem _playerInitSystem;
     [Inject] private PlayerInputSystem _playerInputSystem;
     [Inject] private PlayerMoveSystem _playerMoveSystem;
     [Inject] private CameraFollowSystem _cameraFollowSystem;
+    [Inject] private DoorOpenSystem _doorOpenSystem;
 
     public void Init()
     {
         ecsWorld = new EcsWorld();
 
-
-        initSystems = new EcsSystems(ecsWorld)
-            .Add(_playerInitSystem);
-        initSystems.Init();
-        
-        updateSystems = new EcsSystems(ecsWorld)
+        _systems = new EcsSystems(ecsWorld)
+            .Add(_playerInitSystem)
             .Add(_playerInputSystem)
             .Add(_playerMoveSystem)
-            .Add(_cameraFollowSystem);
+            .Add(_cameraFollowSystem)
+            .Add(_doorOpenSystem);
 
- 
-      
-        updateSystems.Init();
 
-       
+        _systems.Init();
     }
 
     public void Update()
     {
-        updateSystems.Run();
+        _systems.Run();
     }
 
     public void OnDestroy()
     {
-        initSystems.Destroy();
-        updateSystems.Destroy();
+        _systems.Destroy();
         ecsWorld.Destroy();
     }
 }

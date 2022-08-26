@@ -12,6 +12,8 @@ public class GameInstaller : MonoInstaller
         Container.Bind<PlayerInitSystem>().AsSingle().NonLazy();
         Container.Bind<PlayerMoveSystem>().AsSingle().NonLazy();
         Container.Bind<CameraFollowSystem>().AsSingle().NonLazy();
+        Container.Bind<DoorOpenSystem >().AsSingle().NonLazy();
+      
         
         Container.BindInterfacesAndSelfTo<UnityAdapter>().FromComponentInHierarchy(_unityAdapter).AsSingle();
     }
